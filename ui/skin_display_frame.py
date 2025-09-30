@@ -10,13 +10,31 @@ class SkinDisplayFrame(ttk.LabelFrame):
         self.create_widgets()
 
     def create_widgets(self):
-        self.renames_canvas = tk.Canvas(self, width=600, height=300)
+        # renames frame
+        self.renames_frame = ttk.Frame(self)
+        self.renames_frame.pack(fill="both", expand=True, padx=10, pady=5)
+        # fix problems with resizing window
+        self.renames_frame.pack_propagate(False)
+
+        # canvas where the renames are shown
+        self.renames_canvas = tk.Canvas(self.renames_frame)
         self.renames_canvas.pack(side="left", fill="both", expand=True)
 
-        scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.renames_canvas.yview)
+        # scrollbar to scroll through the canvas
+        scrollbar = ttk.Scrollbar(self.renames_frame, orient="vertical", command=self.renames_canvas.yview)
         scrollbar.pack(side="right", fill="y")
 
         self.renames_canvas.configure(yscrollcommand=scrollbar.set)
+
+        # buttons to apply or reset changes
+        button_frame = ttk.Frame(self)
+        button_frame.pack(side="bottom", fill="x", pady=5)
+
+        apply_button = ttk.Button(button_frame, text="Apply Changes")
+        apply_button.pack(side="left", padx=10)
+
+        reset_button = ttk.Button(button_frame, text="Reset Changes")
+        reset_button.pack(side="left", padx=10)
 
     def render_renames(self):
         # Clear previous widgets
@@ -26,12 +44,20 @@ class SkinDisplayFrame(ttk.LabelFrame):
         # Create a new frame inside the canvas
         self.canvas_frame = ttk.Frame(self.renames_canvas)
         # Create a window for the canvas frame
-        _ = self.renames_canvas.create_window((0, 0), window=self.canvas_frame, anchor="nw")
+        canvas_window = self.renames_canvas.create_window((0, 0), window=self.canvas_frame, anchor="nw")
 
         if not self.app.ror_names:
             no_ror_label = ttk.Label(self.canvas_frame, text="No ROR names found. Please add ROR names.")
             no_ror_label.pack(padx=10, pady=10)
             return
+
+        # this function handles mouse wheel scrolling
+        def on_mousewheel(event):
+            # /120 to get 1 unit per notch
+            self.renames_canvas.yview_scroll(int(-event.delta/120), "units")
+
+            # Prevent default scrolling behavior of widgets
+            return "break"
 
         # Render each ROR name with a corresponding skin selection combobox
         for skin_name in self.app.ror_names:
@@ -44,14 +70,20 @@ class SkinDisplayFrame(ttk.LabelFrame):
             ror_name_label = ttk.Label(skin_frame, text=skin_name)
             ror_name_label.pack(side="left")
 
+            # Bind mouse wheel scrolling
+            skin_frame.bind("<MouseWheel>", on_mousewheel)
+            skin_combobox.unbind
+            skin_combobox.bind("<MouseWheel>", on_mousewheel)
+            ror_name_label.bind("<MouseWheel>", on_mousewheel)
+
         self.canvas_frame.update_idletasks()
         # Update scrollregion
         self.renames_canvas.configure(scrollregion=self.renames_canvas.bbox("all"))
 
-        # this function handles mouse wheel scrolling
-        def on_mousewheel(event):
-            # /120 to get 1 unit per notch
-            self.renames_canvas.yview_scroll(int(-event.delta/120), "units")
+        def configure_canvas_frame(event):
+            self.renames_canvas.itemconfig(canvas_window, width=event.width)
         
+        self.renames_canvas.bind('<Configure>', configure_canvas_frame)
         # Bind mouse wheel scrolling
         self.renames_canvas.bind("<MouseWheel>", on_mousewheel)
+        self.canvas_frame.bind("<MouseWheel>", on_mousewheel)

@@ -15,6 +15,7 @@ class SkinRenamerApp(tk.Frame):
         self.parent = parent
         self.parent.title("Skin Renamer")
         self.parent.geometry("800x600")
+        self.parent.minsize(600, 400)
 
         self.settings = get_settings()
         self.AC_PATH = self.settings.get("AC_PATH")
