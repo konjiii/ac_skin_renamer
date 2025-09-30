@@ -11,8 +11,12 @@ class alexrename():
         self.save_file = save_file                 # init savefile (to save skin_dict)
         if savefile_location == Path(""):
             self.savefile_location = Path.cwd()/save_file
+        else:
+            self.savefile_location = savefile_location
         if skinpath == Path(""):
             self.skinpath = Path.cwd()/"skins"
+        else:
+            self.skinpath = skinpath
 
     @staticmethod
     def rename_path(old_dir, new_dir):
@@ -53,10 +57,11 @@ class alexrename():
             # RENAME THE FOLDER
             old_skin = skin_dict[chosen_driver]
             new_skin = chosen_rorzone
-            self.rename_path(old_dir=self.skinpath/old_skin, new_dir=self.skinpath/new_skin)
-            # update skin dict
-            skin_dict[chosen_driver] = chosen_rorzone
-            self.save(skin_dict, save_file)
+            if old_skin != new_skin:
+                self.rename_path(old_dir=self.skinpath/old_skin, new_dir=self.skinpath/new_skin)
+                # update skin dict
+                skin_dict[chosen_driver] = chosen_rorzone
+                self.save(skin_dict, save_file)
 
     def from_config_to_change(self, copy_skin_dict):
         if copy_skin_dict == None:
@@ -97,13 +102,13 @@ if __name__ == "__main__":
     skin_dict = {elem: elem for elem in drivers}
     # init savefile (to save skin_dict)
     save_file = "skinfile"
-    bone= alexrename(drivers=drivers, rorzone_skin_names=rorzone_skin_names,skin_dict=skin_dict,save_file=save_file)
+    bone= alexrename(drivers=drivers, rorzone_skin_names=rorzone_skin_names,skin_dict=skin_dict,save_file=save_file,skinpath=Path(r"F:\SteamLibrary\steamapps\common\assettocorsa\content\cars\vrc_formula_alpha_2024_csp\skins"))
 
     while True:
         # example for checking if safe file exists.
         if (Path.cwd()/save_file).exists():
             skin_dict = bone.load(save_file)
-            print("yup")
+            print("Load successful")
         # Print skin_dict
         print(f"\n{skin_dict}\n")
         if input("Copy configuration?:[y/n]").lower().startswith("y"):
