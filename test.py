@@ -1,23 +1,20 @@
-from html.parser import HTMLParser
+from ast import literal_eval
 
-html_str = '<option value="2557">benwood_racing_14</option><option value="2558">benwood_racing_15</option><option value="2559">detroit_motorsports_04</option><option value="2560">detroit_motorsports_34</option><option value="2561">enstone_racing_42</option><option value="2562">enstone_racing_61</option><option value="2563">fortix_vrc_racing_08</option><option value="2564">fortix_vrc_racing_96</option><option value="2565">milloms_fa_18</option><option value="2566">milloms_fa_24</option><option value="2567">panther_racing_05</option><option value="2568">panther_racing_06</option><option value="2569">revision_racing_17</option><option value="2570">revision_racing_45</option><option value="2571">vrc_motorsport_07</option><option value="2572">vrc_motorsport_29</option>'
+# bla = "print('Hello, World!')"
+bla = {"key": "value", "number": 42, "list": [1, 2, 3]}
+bla_str = str(bla)
 
-class MyHTMLParser(HTMLParser):
-    def __init__(self):
-        super().__init__()
 
-        self.ror_skins = list()
+print(bla_str)
+print(type(bla_str))
 
-    def handle_starttag(self, _tag, _attrs):
-        pass
+try:
+    bla_back = literal_eval(bla_str)
+except (ValueError):
+    print("HES TRYING TO HACK YOU")
+    exit()
 
-    def handle_data(self, data):
-        self.ror_skins.append(data)
-
-    def handle_endtag(self, _tag):
-        pass
-
-parser = MyHTMLParser()
-parser.feed(html_str)
-
-print(parser.ror_skins)
+if type(bla_back) is not dict:
+    raise TypeError("Not a dict after eval!")
+print(bla_back)
+print(type(bla_back))
