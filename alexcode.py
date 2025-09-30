@@ -2,6 +2,7 @@
 import os
 import pickle
 from pathlib import Path
+from ast import literal_eval
 class alexrename():
     def __init__(self, drivers, rorzone_skin_names, skin_dict ,save_file="test_save_file", skinpath = Path(""), savefile_location = Path("")):
         self.drivers=drivers                       # original drivers and rorzone skinnames
@@ -57,6 +58,27 @@ class alexrename():
             skin_dict[chosen_driver] = chosen_rorzone
             self.save(skin_dict, save_file)
 
+    def from_config_to_change(self, copy_skin_dict):
+        if copy_skin_dict == None:
+            return
+        if set(copy_skin_dict.keys())!=set(self.skin_dict.keys()): # if keys not the same not correct dict!
+            return
+        for key in list(skin_dict.values()):
+            driver = key
+            skin_name = copy_skin_dict[key]
+            self.change_skin(chosen_driver=driver, chosen_rorzone=skin_name)
+            
+    @staticmethod
+    def get_config_from_text(copy_skin_dict_str):
+        try:
+            copy_skin_dict = literal_eval(copy_skin_dict_str)
+        except:
+            print("HE IS TRYING TO HACK YOU! DONT LISTEN TO HI>$!**(*)")
+            return
+        if type(copy_skin_dict) is not dict:
+            raise TypeError("Not a dict after eval")
+        return copy_skin_dict
+    
     def show_drivers(self):
         for k, v in enumerate(self.drivers):
             print(f"{k}: {v}")
@@ -65,6 +87,8 @@ class alexrename():
         for i, elem in enumerate(self.rorzone_skin_names):
             print(f"{i}: {elem}")
         
+    
+
 if __name__ == "__main__":
     # init
     drivers=['A525_10_Gasly', 'AMR25_18_Stroll', 'APXGP_7_Hayes_Miami', 'APXGP_9_Pearce_Miami', 'C45_27_Hulkenberg', 'C45_5_Bortoleto', 'FW47_23_Albon', 'FW47_55_Sainz', 'MCL39_4_Norris', 'MCL39_81_Piastri', 'RB21_1_Verstappen', 'RB21_22_Tsunoda', 'RB21_30_Lawson', 'RB21_Japan_1_Verstappen', 'RB21_Japan_22_Tsunoda', 'SF23_Test_Hamilton', 'SF25_16_Leclerc', 'SF25_44_Hamilton', 'SF25_Miami_16_Leclerc', 'SF25_Miami_44_Hamilton', 'VCARB02_22_Tsunoda', 'VCARB02_30_Lawson', 'VCARB02_6_Hadjar', 'VCARB02_Miami_30_Lawson', 'VCARB02_Miami_6_Hadjar', 'VF25_31_Ocon', 'VF25_87_Bearman', 'W16_12_Antonelli', 'W16_63_Russell', 'A525_7_Doohan', 'AMR25_14_Alonso']
@@ -82,8 +106,12 @@ if __name__ == "__main__":
             print("yup")
         # Print skin_dict
         print(f"\n{skin_dict}\n")
+        if input("Copy configuration?:[y/n]").lower().startswith("y"):
+            copy_skin_dict_str = input("Paste here: ")
+            copy_skin_dict = bone.get_config_from_text(copy_skin_dict_str)
+            bone.from_config_to_change(copy_skin_dict)
         # if you want to get the original back, answer yes
-        if input("Set skins back to original?:[y/n]").lower().startswith("y"):
+        elif input("Set skins back to original?:[y/n]").lower().startswith("y"):
             bone.set_back_to_original()
         # Quit
         elif input("Quit?").lower().startswith("y"):
