@@ -23,14 +23,17 @@ class SkinDisplayFrame(ttk.LabelFrame):
         if self.canvas_frame:
             self.canvas_frame.destroy()
 
+        # Create a new frame inside the canvas
         self.canvas_frame = ttk.Frame(self.renames_canvas)
-        canvas_window = self.renames_canvas.create_window((0, 0), window=self.canvas_frame, anchor="nw")
+        # Create a window for the canvas frame
+        _ = self.renames_canvas.create_window((0, 0), window=self.canvas_frame, anchor="nw")
 
         if not self.app.ror_names:
             no_ror_label = ttk.Label(self.canvas_frame, text="No ROR names found. Please add ROR names.")
             no_ror_label.pack(padx=10, pady=10)
             return
 
+        # Render each ROR name with a corresponding skin selection combobox
         for skin_name in self.app.ror_names:
             skin_frame = ttk.Frame(self.canvas_frame)
             skin_frame.pack(fill="x", padx=10, pady=5)
@@ -42,13 +45,13 @@ class SkinDisplayFrame(ttk.LabelFrame):
             ror_name_label.pack(side="left")
 
         self.canvas_frame.update_idletasks()
+        # Update scrollregion
         self.renames_canvas.configure(scrollregion=self.renames_canvas.bbox("all"))
 
-        def configure_canvas_frame(event):
-            self.renames_canvas.itemconfig(canvas_window, width=event.width)
-        
+        # this function handles mouse wheel scrolling
         def on_mousewheel(event):
-            self.renames_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
-
-        self.renames_canvas.bind('<Configure>', configure_canvas_frame)
+            # /120 to get 1 unit per notch
+            self.renames_canvas.yview_scroll(int(-event.delta/120), "units")
+        
+        # Bind mouse wheel scrolling
         self.renames_canvas.bind("<MouseWheel>", on_mousewheel)
