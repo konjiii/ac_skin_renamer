@@ -75,7 +75,7 @@ if __name__ == "__main__":
     save_file = "skinfile"
     bone= alexrename(drivers=drivers, rorzone_skin_names=rorzone_skin_names,skin_dict=skin_dict,save_file=save_file)
 
-    for i in range(1):
+    while True:
         # example for checking if safe file exists.
         if (Path.cwd()/save_file).exists():
             skin_dict = bone.load(save_file)
@@ -84,7 +84,10 @@ if __name__ == "__main__":
         # if you want to get the original back, answer yes
         if input("Set skins back to original?:[y/n]").lower().startswith("y"):
             bone.set_back_to_original()
-
+        # Quit
+        elif input("Quit?").lower().startswith("y"):
+            break
+        # swap skins
         else:
             bone.show_drivers()
             driver_int = int(input("choose driver:"))
