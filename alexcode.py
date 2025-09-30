@@ -80,7 +80,8 @@ if __name__ == "__main__":
         if (Path.cwd()/save_file).exists():
             skin_dict = bone.load(save_file)
             print("yup")
-        
+        # Print skin_dict
+        print(f"\n{skin_dict}\n")
         # if you want to get the original back, answer yes
         if input("Set skins back to original?:[y/n]").lower().startswith("y"):
             bone.set_back_to_original()
