@@ -1,16 +1,13 @@
 import tkinter as tk
-from tkinter import ttk
 import os
 import pickle
-from helper_functions import valid_path, get_settings
-from file_io_functions import get_cars, get_skins, get_ror_names
-from ui.path_input_frame import PathInputFrame
-from ui.control_frame import ControlFrame
-from ui.skin_display_frame import SkinDisplayFrame
+from backend.file_io_functions import valid_path, get_settings
+from backend import SkinManager
+from ui import PathInputFrame, ControlFrame, SkinDisplayFrame
 
 class SkinRenamerApp(tk.Frame):
     """Main application class."""
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent, *args, **kwargs) -> None:
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
         self.parent.title("Skin Renamer")
@@ -26,28 +23,20 @@ class SkinRenamerApp(tk.Frame):
         else:
             self.initialize_main_app()
 
-    def initialize_main_app(self):
-        self.cars = get_cars(self.AC_PATH)
-        self.skins = []
-        self.ror_names = []
+    def initialize_main_app(self) -> None:
+        # backend manager
+        self.skin_manager = SkinManager(self)
 
-        self.control_frame = ControlFrame(self.parent, self)
+        # UI components
+        self.control_frame = ControlFrame(self.parent, self.skin_manager)
         self.control_frame.pack(fill="x")
 
-        self.skin_display_frame = SkinDisplayFrame(self.parent, self, text="Select Skin")
+        self.skin_display_frame = SkinDisplayFrame(self.parent, self.skin_manager, text="Select Skin")
         self.skin_display_frame.pack(padx=10, pady=10, fill="both", expand=True)
+        self.control_frame.set_skin_display_frame(self.skin_display_frame)
 
         # Initial data load
-        self.update_data()
-
-    def update_data(self):
-        """Update skins and ror_names based on the selected car and re-render."""
-        selected_car = self.control_frame.car_combobox.get()
-        if not selected_car:
-            return
-            
-        self.skins = get_skins(self.AC_PATH, selected_car)
-        self.ror_names = get_ror_names(self.AC_PATH, selected_car)
+        self.skin_manager.update_data()
         self.skin_display_frame.render_renames()
 
 if __name__ == "__main__":

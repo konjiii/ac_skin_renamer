@@ -3,9 +3,9 @@ from tkinter import ttk
 
 class SkinDisplayFrame(ttk.LabelFrame):
     """Frame for displaying and managing skin renames."""
-    def __init__(self, parent, app, *args, **kwargs):
+    def __init__(self, parent, skin_manager, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-        self.app = app
+        self.skin_manager = skin_manager
         self.canvas_frame = None
         self.create_widgets()
 
@@ -46,7 +46,7 @@ class SkinDisplayFrame(ttk.LabelFrame):
         # Create a window for the canvas frame
         canvas_window = self.renames_canvas.create_window((0, 0), window=self.canvas_frame, anchor="nw")
 
-        if not self.app.ror_names:
+        if not self.skin_manager.ror_names:
             no_ror_label = ttk.Label(self.canvas_frame, text="No ROR names found. Please add ROR names.")
             no_ror_label.pack(padx=10, pady=10)
             return
@@ -60,11 +60,11 @@ class SkinDisplayFrame(ttk.LabelFrame):
             return "break"
 
         # Render each ROR name with a corresponding skin selection combobox
-        for skin_name in self.app.ror_names:
+        for skin_name in self.skin_manager.ror_names:
             skin_frame = ttk.Frame(self.canvas_frame)
             skin_frame.pack(fill="x", padx=10, pady=5)
-            
-            skin_combobox = ttk.Combobox(skin_frame, values=self.app.skins)
+
+            skin_combobox = ttk.Combobox(skin_frame, values=self.skin_manager.skins)
             skin_combobox.pack(side="left", padx=(0, 10))
 
             ror_name_label = ttk.Label(skin_frame, text=skin_name)
