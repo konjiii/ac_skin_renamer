@@ -1,7 +1,32 @@
 import os
 import pickle
+from typing import Any
 
-def get_cars(ac_path):
+def save(var: Any, path: str) -> None:
+    """
+    Save variable to a pickle file.
+
+    parameters:
+        var: variable to save
+        path: path to the pickle file
+    returns:
+        None
+    """
+    with open(path, "wb") as file: 
+        pickle.dump(var, file)
+
+def load(path: str) -> Any:
+    """
+    Load variable from a pickle file.
+    parameters:
+        path: path to the pickle file
+    returns:
+        variable loaded from the pickle file
+    """
+    with open(path, "rb") as file: 
+        return pickle.load(file)
+
+def get_cars(ac_path: str) -> list[str]:
     """
     Find all cars in the cars directory of AC installation
 
@@ -15,7 +40,7 @@ def get_cars(ac_path):
         return []
     return os.listdir(cars_folder)
 
-def get_skins(ac_path, car_name):
+def get_skins(ac_path: str, car_name: str) -> list[str]:
     """
     Find skin_list.pkl in skin directory of selected car. If not found, create it with current skins in directory.
 
@@ -26,23 +51,21 @@ def get_skins(ac_path, car_name):
         list of skins (folder names)
     """
     skins_folder = os.path.join(ac_path, "content", "cars", car_name, "skins")
+    skins_file = os.path.join(skins_folder, "skin_list.pkl")
 
     if not os.path.exists(skins_folder):
         return []
 
-    if os.path.exists(os.path.join(skins_folder, "skin_list.pkl")):
-        with open(os.path.join(skins_folder, "skin_list.pkl"), "rb") as f:
-            return pickle.load(f)
-    
-    skins = os.listdir(skins_folder)
-    skin_list_path = os.path.join(skins_folder, "skin_list.pkl")
+    if os.path.exists(skins_file):
+        return load(skins_file)
 
-    with open(skin_list_path, "wb") as f:
-        pickle.dump(skins, f)
+    skins = os.listdir(skins_folder)
+
+    save(skins, skins_file)
 
     return skins
 
-def get_ror_names(ac_path, car_name):
+def get_ror_names(ac_path: str, car_name: str) -> list[str]:
     """
     Find ror_names in the skin directory of the selected car.
 
@@ -53,16 +76,16 @@ def get_ror_names(ac_path, car_name):
         list of ror_names (folder names)
     """
     skins_folder = os.path.join(ac_path, "content", "cars", car_name, "skins")
+    ror_file = os.path.join(skins_folder, "ror_list.pkl")
     if not os.path.exists(skins_folder):
         return []
-    
-    if not os.path.exists(os.path.join(skins_folder, "ror_list.pkl")):
+
+    if not os.path.exists(ror_file):
         return []
 
-    with open(os.path.join(skins_folder, "ror_list.pkl"), "rb") as f:
-        return pickle.load(f)
-    
-def save_ror_names(ac_path, car_name, ror_names) -> int:
+    return load(ror_file)
+
+def save_ror_names(ac_path: str, car_name: str, ror_names: list[str]) -> int:
     """
     Save list of ror_names in the skin directory of the selected car.
 
@@ -74,11 +97,11 @@ def save_ror_names(ac_path, car_name, ror_names) -> int:
         int: -1 if error, 0 if success
     """
     skins_folder = os.path.join(ac_path, "content", "cars", car_name, "skins")
+    ror_file = os.path.join(skins_folder, "ror_list.pkl")
     if not os.path.exists(skins_folder):
         return -1
-    
-    with open(os.path.join(skins_folder, "ror_list.pkl"), "wb") as f:
-        pickle.dump(ror_names, f)
+
+    save(ror_names, ror_file)
 
     return 0
 
@@ -89,10 +112,9 @@ def get_settings() -> dict:
     returns:
         dict: settings dictionary
     """
-    with open("settings.pkl", "rb") as f:
-        return pickle.load(f)
-    
-def valid_path(path) -> bool:
+    return load("settings.pkl")
+
+def valid_path(path: str) -> bool:
     """
     Check if the provided path is a valid directory.
     
@@ -104,7 +126,7 @@ def valid_path(path) -> bool:
     import os
     return path is not None and os.path.exists(path) and os.path.isdir(path)
 
-def save_ac_path(settings) -> int:
+def save_ac_path(settings: dict) -> int:
     """
     Save the Assetto Corsa path to settings.pkl.
     
@@ -113,10 +135,26 @@ def save_ac_path(settings) -> int:
     returns:
         int: -1 if error, 0 if success
     """
-    try:
-        with open("settings.pkl", "wb") as f:
-            pickle.dump(settings, f)
-    except Exception as e:
-        print(f"Error saving AC path: {e}")
-        return -1
-    return 0
+    return save(settings, "settings.pkl")
+
+def get_renames(ac_path: str, car_name: str) -> dict:
+    """
+    Get the rename dictionary file name.
+
+    parameters:
+        ac_path: path to AC installation
+        car_name: name of the car (folder name)
+    returns:
+        str: rename dictionary file name
+    """
+    skins_folder = os.path.join(ac_path, "content", "cars", car_name, "skins")
+    renames_file = os.path.join(skins_folder, "rename_dict.pkl")
+    if not os.path.exists(skins_folder):
+        return {}
+
+    if not os.path.exists(renames_file):
+        renames_dict = {}
+        save(renames_dict, renames_file)
+        return renames_dict
+
+    return load(renames_file)

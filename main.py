@@ -25,7 +25,7 @@ class SkinRenamerApp(tk.Frame):
 
     def initialize_main_app(self) -> None:
         # backend manager
-        self.skin_manager = SkinManager(self)
+        self.skin_manager = SkinManager(self.AC_PATH)
 
         # UI components
         self.control_frame = ControlFrame(self.parent, self.skin_manager)
@@ -36,7 +36,7 @@ class SkinRenamerApp(tk.Frame):
         self.control_frame.set_skin_display_frame(self.skin_display_frame)
 
         # Initial data load
-        self.skin_manager.update_data()
+        self.skin_manager.update_car_data(self.control_frame.car_combobox.get())
         self.skin_display_frame.render_renames()
 
 if __name__ == "__main__":

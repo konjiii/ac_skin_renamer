@@ -34,7 +34,7 @@ class ControlFrame(ttk.Frame):
         remove_ror_names_button.pack(side="left", padx=10)
 
     def update_selection(self, _) -> None:
-        self.skin_manager.update_data()
+        self.skin_manager.update_car_data(self.car_combobox.get())
         self.skin_display_frame.render_renames()
 
     def add_ror_names(self) -> None:
