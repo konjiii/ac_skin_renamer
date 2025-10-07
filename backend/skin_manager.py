@@ -94,6 +94,7 @@ class SkinManager:
         self.to_rename.clear()
 
         failed = False
+        to_remove = list()
         for ror_name, skin_name in self.renames.items():
             old_dir = Path(self.AC_PATH) / "content" / "cars" / self.selected_car / "skins" / ror_name
             new_dir = Path(self.AC_PATH) / "content" / "cars" / self.selected_car / "skins" / skin_name
@@ -108,7 +109,12 @@ class SkinManager:
                     old_dir=old_dir,
                     new_dir=new_dir
                 )
+                to_remove.append(ror_name)
 
+        for ror_name in to_remove:
+            del self.renames[ror_name]
+
+        save_renames(self.AC_PATH, self.selected_car, self.renames)
 
         for ror_name, combobox in self.rename_comboboxes.items():
             combobox.set('')  # Clear the combobox selection

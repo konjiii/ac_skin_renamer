@@ -70,6 +70,10 @@ class SkinDisplayFrame(ttk.LabelFrame):
             ror_name_label = ttk.Label(skin_frame, text=ror_name)
             ror_name_label.pack(side="left")
 
+            # set current selection if already mapped
+            if ror_name in self.skin_manager.renames:
+                skin_combobox.set(self.skin_manager.renames[ror_name])
+
             # Bind mouse wheel scrolling
             skin_frame.bind("<MouseWheel>", on_mousewheel)
             skin_combobox.unbind
