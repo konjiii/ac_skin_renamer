@@ -158,3 +158,23 @@ def get_renames(ac_path: str, car_name: str) -> dict:
         return renames_dict
 
     return load(renames_file)
+
+def save_renames(ac_path: str, car_name: str, renames: dict) -> int:
+    """
+    Save the rename dictionary file name.
+
+    parameters:
+        ac_path: path to AC installation
+        car_name: name of the car (folder name)
+        renames: rename dictionary to save
+    returns:
+        int: -1 if error, 0 if success
+    """
+    skins_folder = os.path.join(ac_path, "content", "cars", car_name, "skins")
+    renames_file = os.path.join(skins_folder, "rename_dict.pkl")
+    if not os.path.exists(skins_folder):
+        return -1
+
+    save(renames, renames_file)
+
+    return 0

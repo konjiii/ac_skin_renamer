@@ -30,10 +30,10 @@ class SkinDisplayFrame(ttk.LabelFrame):
         button_frame = ttk.Frame(self)
         button_frame.pack(side="bottom", fill="x", pady=5)
 
-        apply_button = ttk.Button(button_frame, text="Apply Changes")
+        apply_button = ttk.Button(button_frame, text="Apply Changes", command=self.skin_manager.apply_changes)
         apply_button.pack(side="left", padx=10)
 
-        reset_button = ttk.Button(button_frame, text="Reset Changes")
+        reset_button = ttk.Button(button_frame, text="Reset Changes", command=self.skin_manager.reset_changes)
         reset_button.pack(side="left", padx=10)
 
     def render_renames(self):
@@ -60,14 +60,14 @@ class SkinDisplayFrame(ttk.LabelFrame):
             return "break"
 
         # Render each ROR name with a corresponding skin selection combobox
-        for skin_name in self.skin_manager.ror_names:
+        for ror_name in self.skin_manager.ror_names:
             skin_frame = ttk.Frame(self.canvas_frame)
             skin_frame.pack(fill="x", padx=10, pady=5)
 
             skin_combobox = ttk.Combobox(skin_frame, values=self.skin_manager.skins)
             skin_combobox.pack(side="left", padx=(0, 10))
 
-            ror_name_label = ttk.Label(skin_frame, text=skin_name)
+            ror_name_label = ttk.Label(skin_frame, text=ror_name)
             ror_name_label.pack(side="left")
 
             # Bind mouse wheel scrolling
@@ -75,6 +75,14 @@ class SkinDisplayFrame(ttk.LabelFrame):
             skin_combobox.unbind
             skin_combobox.bind("<MouseWheel>", on_mousewheel)
             ror_name_label.bind("<MouseWheel>", on_mousewheel)
+
+            # Update skin dict when selection changes
+            skin_combobox.bind("<<ComboboxSelected>>", 
+                lambda event, ror=ror_name, combo=skin_combobox: 
+                self.skin_manager.update_skin_mapping(ror, combo.get())
+            )
+
+            self.skin_manager.rename_comboboxes[ror_name] = skin_combobox
 
         self.canvas_frame.update_idletasks()
         # Update scrollregion
