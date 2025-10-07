@@ -8,7 +8,7 @@ class alexrename():
         self.drivers=drivers                       # original drivers and rorzone skinnames
         self.rorzone_skin_names=rorzone_skin_names # init dict that keeps track of driver and rorzone skin name combo
         self.skin_dict = skin_dict 
-        self.save_file = save_file                 # init savefile (to save skin_dict)
+        self.save_file = save_file                 # init savefile (to save self.skin_dict)
         if savefile_location == Path(""):
             self.savefile_location = Path.cwd()/save_file
         else:
@@ -17,6 +17,7 @@ class alexrename():
             self.skinpath = Path.cwd()/"skins"
         else:
             self.skinpath = skinpath
+
 
     @staticmethod
     def rename_path(old_dir, new_dir):
@@ -29,6 +30,10 @@ class alexrename():
         folders = [f.name for f in folderpath.iterdir() if f.is_dir()]
         return folders
 
+    #  save and update self.skin_dict
+    def dict_save(self,key,value):
+        self.skin_dict[key]=value
+        self.save(self.skin_dict,self.save_file)
     # save and load
     @staticmethod
     def save(var,filename="testfile"):
@@ -45,7 +50,7 @@ class alexrename():
 
     def change_skin(self, chosen_driver, chosen_rorzone):
             if (self.savefile_location).exists(): # check for save file
-                self.skin_dict = self.load(save_file) # get remembered configuration
+                self.skin_dict = self.load(self.save_file) # get remembered configuration
                 
             skin_current = self.get_folders(self.skinpath) # get current folder names
             if set(list(self.skin_dict.values()))!=set(skin_current): # current folder names are not the skin names (doesnt correspond)
@@ -55,20 +60,39 @@ class alexrename():
                 return
             
             # RENAME THE FOLDER
-            old_skin = skin_dict[chosen_driver]
+            old_skin = self.skin_dict[chosen_driver]
             new_skin = chosen_rorzone
-            if old_skin != new_skin:
+            temporary_skin = new_skin+"1"
+            # if the skin is already the desired name, no need to change
+            if old_skin == new_skin:
+                return
+            # else
+            if (self.skinpath/new_skin).exists(): # if map already exists, can't rename to this name
+                # search where the new_skin map exists
+                holding_driver = next((key for key, value in self.skin_dict.items() if value == new_skin), None)
+                # rename that instance first
+                self.rename_path(old_dir=self.skinpath/new_skin, new_dir=self.skinpath/temporary_skin)
+                # then change old to new
                 self.rename_path(old_dir=self.skinpath/old_skin, new_dir=self.skinpath/new_skin)
-                # update skin dict
-                skin_dict[chosen_driver] = chosen_rorzone
-                self.save(skin_dict, save_file)
+                # if original is available then go back to original
+                if not (self.skinpath/holding_driver).exists():
+                    self.rename_path(old_dir=self.skinpath/temporary_skin, new_dir=self.skinpath/holding_driver)
+                    self.dict_save(holding_driver,holding_driver)
+                # otherwise just make new -> old, (DONE: old is new, NOW: new is old)
+                else:
+                    self.rename_path(old_dir=self.skinpath/temporary_skin, new_dir=self.skinpath/old_skin)
+                    self.dict_save(holding_driver,old_skin)
+            else:
+                self.rename_path(old_dir=self.skinpath/old_skin, new_dir=self.skinpath/new_skin)
+            # update skin dict and save in pickle
+            self.dict_save(chosen_driver,new_skin)
 
     def from_config_to_change(self, copy_skin_dict):
         if copy_skin_dict == None:
             return
         if set(copy_skin_dict.keys())!=set(self.skin_dict.keys()): # if keys not the same not correct dict!
             return
-        for key in list(skin_dict.values()):
+        for key in list(self.skin_dict.values()):
             driver = key
             skin_name = copy_skin_dict[key]
             self.change_skin(chosen_driver=driver, chosen_rorzone=skin_name)
@@ -87,10 +111,12 @@ class alexrename():
     def show_drivers(self):
         for k, v in enumerate(self.drivers):
             print(f"{k}: {v}")
+        return len(self.drivers)
 
     def show_rorzone(self):
         for i, elem in enumerate(self.rorzone_skin_names):
             print(f"{i}: {elem}")
+        return len (self.rorzone_skin_names)
         
     
 
@@ -102,35 +128,78 @@ if __name__ == "__main__":
     skin_dict = {elem: elem for elem in drivers}
     # init savefile (to save skin_dict)
     save_file = "skinfile"
-    bone= alexrename(drivers=drivers, rorzone_skin_names=rorzone_skin_names,skin_dict=skin_dict,save_file=save_file,skinpath=Path(r"F:\SteamLibrary\steamapps\common\assettocorsa\content\cars\vrc_formula_alpha_2024_csp\skins"))
+    # where to change the skins
+    skinpath = Path(r"") # PUT YOUR PATH TO THE SKINS HERE!!!
+    bone= alexrename(drivers=drivers, rorzone_skin_names=rorzone_skin_names,skin_dict=skin_dict,save_file=save_file,skinpath=skinpath)
 
-    while True:
+    app_on=True
+    while app_on:
+        print("""
+------------------Skin changer------------------
+Options:
+1: Paste configuration
+2: Set skins back to original
+3: Assign skins
+q: quit
+----------------------------------------------------""")
         # example for checking if safe file exists.
-        if (Path.cwd()/save_file).exists():
-            skin_dict = bone.load(save_file)
-            print("Load successful")
+        if (Path.cwd()/bone.save_file).exists():
+            skin_dict = bone.load(bone.save_file)
+            print("Load successful!")
+        else:
+            print("No load file exists or is found.")
         # Print skin_dict
         print(f"\n{skin_dict}\n")
-        if input("Copy configuration?:[y/n]").lower().startswith("y"):
-            copy_skin_dict_str = input("Paste here: ")
-            copy_skin_dict = bone.get_config_from_text(copy_skin_dict_str)
-            bone.from_config_to_change(copy_skin_dict)
-        # if you want to get the original back, answer yes
-        elif input("Set skins back to original?:[y/n]").lower().startswith("y"):
-            bone.set_back_to_original()
-        # Quit
-        elif input("Quit?").lower().startswith("y"):
-            break
-        # swap skins
-        else:
-            bone.show_drivers()
-            driver_int = int(input("choose driver:"))
-            chosen_driver = drivers[driver_int]
-            print("-----------------------\n\n\n\n")
-            bone.show_rorzone()
-            ror_int = int(input("choose rorzone:"))
-            chosen_rorzone = rorzone_skin_names[ror_int]
-            # skinpath = rf"F:\SteamLibrary\steamapps\common\assettocorsa\content\cars\vrc_formula_alpha_2024_csp\skins"
-            bone.change_skin(chosen_driver,chosen_rorzone)
-    
+        # Selection menu:
+        chosen_option=input("Choose an option: ")
+        match chosen_option:
+            # Paste configuration
+            case "1":
+                copy_skin_dict_str = input("Paste here: ")
+                if copy_skin_dict_str == "q":
+                    continue
+                copy_skin_dict = bone.get_config_from_text(copy_skin_dict_str)
+                bone.from_config_to_change(copy_skin_dict)
+                print("~~~~~~~~~~~~~~Config Copied~~~~~~~~~~~~~~")
+            # Set skins back to original
+            case "2":
+                if input("Revert to original? [y/n]").lower().startswith("y"):
+                    bone.set_back_to_original()
+                    print("~~~~~~~Skins set back to original~~~~~~~~")  
+            # Assign skins
+            case "3":
+                if input("Assign skins? [y/n]").lower().startswith("y"):
+                    # get driver nr
+                    amount = bone.show_drivers() # get len of drivers list and print driver options
+                    while True: # check input untill correct
+                        driver_int = int(input("choose driver:"))
+                        # if input is valid
+                        if type(driver_int) is int and 0 <= driver_int and driver_int < (amount):
+                            chosen_driver = drivers[driver_int] # get driver name
+                            print("-----------------------\n\n\n\n")
+                            break
+                        else:
+                            print(f"{driver_int} is not a valid option.")
+                    # get rorzone nr
+                    amount = bone.show_rorzone()
+                    while True: # check input untill correct
+                        ror_int = int(input("choose rorzone:"))
+                        # if input is valid
+                        if type(ror_int) is int and 0 <= ror_int and ror_int < (amount):
+                            chosen_rorzone = rorzone_skin_names[ror_int] # get skin name
+                            print("-----------------------\n\n\n\n")
+                            bone.change_skin(chosen_driver,chosen_rorzone) # assign skin to driver
+                            print("~~~~~~~~~~~~~~Skins assigned~~~~~~~~~~~~~")
+                            break
+                        else:
+                            print(f"{ror_int} is not a valid option.")
+            # Quit the app
+            case "q":
+                if input("Do you want to quit? [y/n]").lower().startswith("y"):
+                    print("quitting program..")
+                    app_on = False
+            # In case of invallid options
+            case _:
+                print(f"The input: {chosen_option}, is not a valid command, try again!")
 
+    print("done")
