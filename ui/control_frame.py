@@ -8,6 +8,7 @@ class ControlFrame(ttk.Frame):
     def __init__(self, parent, skin_manager, *args, **kwargs) -> None:
         super().__init__(parent, *args, **kwargs)
         self.skin_manager = skin_manager
+        self.AC_PATH = skin_manager.AC_PATH
         self.create_widgets()
 
     def set_skin_display_frame(self, skin_display_frame) -> None:
@@ -37,6 +38,8 @@ class ControlFrame(ttk.Frame):
         self.skin_manager.update_car_data(self.car_combobox.get())
         self.skin_display_frame.render_renames()
 
+
+    # should move this function to backend
     def add_ror_names(self) -> None:
         ror_html = sd.askstring("Input", "Paste ROR skin names HTML here:")
         if not ror_html:
@@ -46,14 +49,15 @@ class ControlFrame(ttk.Frame):
         parser.feed(ror_html)
         self.skin_manager.ror_names = parser.ror_skins
 
-        if save_ror_names(self.app.AC_PATH, self.car_combobox.get(), self.skin_manager.ror_names) == -1:
+        if save_ror_names(self.AC_PATH, self.car_combobox.get(), self.skin_manager.ror_names) == -1:
             print("Error saving ror names")
         
         self.update_selection(None)
 
+    # should move this function to backend
     def remove_ror_names(self) -> None:
         self.skin_manager.ror_names = []
-        if save_ror_names(self.app.AC_PATH, self.car_combobox.get(), self.skin_manager.ror_names) == -1:
+        if save_ror_names(self.AC_PATH, self.car_combobox.get(), self.skin_manager.ror_names) == -1:
             print("Error removing ror names")
         
         self.update_selection(None)
