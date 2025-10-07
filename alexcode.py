@@ -4,11 +4,11 @@ import pickle
 from pathlib import Path
 from ast import literal_eval
 class alexrename():
-    def __init__(self, drivers, rorzone_skin_names, skin_dict ,save_file="test_save_file", skinpath = Path(""), savefile_location = Path("")):
-        self.drivers=drivers                       # original drivers and rorzone skinnames
-        self.rorzone_skin_names=rorzone_skin_names # init dict that keeps track of driver and rorzone skin name combo
-        self.skin_dict = skin_dict 
-        self.save_file = save_file                 # init savefile (to save self.skin_dict)
+    def __init__(self, drivers, rorzone_skin_names ,save_file="test_save_file", skinpath = Path(""), savefile_location = Path("")):
+        self.drivers=drivers                               # original drivers
+        self.rorzone_skin_names=rorzone_skin_names         # original rorzone skinnames
+        self.skin_dict = {elem: elem for elem in drivers}  # init dict that keeps track of driver and rorzone skin name combo
+        self.save_file = save_file                         # init savefile (to save self.skin_dict)
         if savefile_location == Path(""):
             self.savefile_location = Path.cwd()/save_file
         else:
@@ -124,13 +124,11 @@ if __name__ == "__main__":
     # init
     drivers=['A525_10_Gasly', 'AMR25_18_Stroll', 'APXGP_7_Hayes_Miami', 'APXGP_9_Pearce_Miami', 'C45_27_Hulkenberg', 'C45_5_Bortoleto', 'FW47_23_Albon', 'FW47_55_Sainz', 'MCL39_4_Norris', 'MCL39_81_Piastri', 'RB21_1_Verstappen', 'RB21_22_Tsunoda', 'RB21_30_Lawson', 'RB21_Japan_1_Verstappen', 'RB21_Japan_22_Tsunoda', 'SF23_Test_Hamilton', 'SF25_16_Leclerc', 'SF25_44_Hamilton', 'SF25_Miami_16_Leclerc', 'SF25_Miami_44_Hamilton', 'VCARB02_22_Tsunoda', 'VCARB02_30_Lawson', 'VCARB02_6_Hadjar', 'VCARB02_Miami_30_Lawson', 'VCARB02_Miami_6_Hadjar', 'VF25_31_Ocon', 'VF25_87_Bearman', 'W16_12_Antonelli', 'W16_63_Russell', 'A525_7_Doohan', 'AMR25_14_Alonso']
     rorzone_skin_names=['benwood_racing_14', 'benwood_racing_15', 'detroit_motorsports_04', 'detroit_motorsports_34', 'enstone_racing_42', 'enstone_racing_61', 'fortix_vrc_racing_08', 'fortix_vrc_racing_96', 'milloms_fa_18', 'milloms_fa_24', 'panther_racing_05', 'panther_racing_06', 'revision_racing_17', 'revision_racing_45', 'vrc_motorsport_07', 'vrc_motorsport_29']
-    # init dict that keeps track of driver and rorzone skin name combo
-    skin_dict = {elem: elem for elem in drivers}
     # init savefile (to save skin_dict)
     save_file = "skinfile"
     # where to change the skins
     skinpath = Path(r"") # PUT YOUR PATH TO THE SKINS HERE!!!
-    bone= alexrename(drivers=drivers, rorzone_skin_names=rorzone_skin_names,skin_dict=skin_dict,save_file=save_file,skinpath=skinpath)
+    bone= alexrename(drivers=drivers, rorzone_skin_names=rorzone_skin_names,save_file=save_file,skinpath=skinpath)
 
     app_on=True
     while app_on:
