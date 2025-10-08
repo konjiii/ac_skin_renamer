@@ -1,5 +1,6 @@
 from pathlib import Path
 from backend.file_io_functions import get_cars, get_ror_names, get_skins, get_renames, save_renames
+import pyperclip
 
 
 class SkinManager:
@@ -124,3 +125,16 @@ class SkinManager:
             print("Some changes could not be reset due to errors.")
             return
         print("All changes have been reset.")
+
+    def copy_configuration(self) -> None:
+        """Copy current renames to clipboard."""
+        if self.renames == {}:
+            print("No renames to copy.")
+            return
+        
+        print("copying configuration")
+        pyperclip.copy(str(self.renames))
+
+    def paste_configuration(self) -> None:
+        """Paste renames from clipboard."""
+        print("pasting configuration")

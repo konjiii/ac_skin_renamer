@@ -26,7 +26,7 @@ class SkinDisplayFrame(ttk.LabelFrame):
 
         self.renames_canvas.configure(yscrollcommand=scrollbar.set)
 
-        # buttons to apply or reset changes
+        # buttons to apply or reset changes and copy/paste configuration
         button_frame = ttk.Frame(self)
         button_frame.pack(side="bottom", fill="x", pady=5)
 
@@ -35,6 +35,13 @@ class SkinDisplayFrame(ttk.LabelFrame):
 
         reset_button = ttk.Button(button_frame, text="Reset Changes", command=self.skin_manager.reset_changes)
         reset_button.pack(side="left", padx=10)
+
+        paste_button = ttk.Button(button_frame, text="Paste configuration", command=self.skin_manager.paste_configuration)
+        paste_button.pack(side="right", padx=10)
+
+        copy_button = ttk.Button(button_frame, text="Copy configuration", command=self.skin_manager.copy_configuration)
+        copy_button.pack(side="right", padx=10)
+
 
     def render_renames(self):
         # Clear previous widgets
