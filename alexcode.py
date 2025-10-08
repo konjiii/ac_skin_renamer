@@ -142,12 +142,12 @@ q: quit
 ----------------------------------------------------""")
         # example for checking if safe file exists.
         if (Path.cwd()/bone.save_file).exists():
-            skin_dict = bone.load(bone.save_file)
+            bone.skin_dict = bone.load(bone.save_file)
             print("Load successful!")
         else:
             print("No load file exists or is found.")
         # Print skin_dict
-        print(f"\n{skin_dict}\n")
+        print(f"\n{bone.skin_dict}\n")
         # Selection menu:
         chosen_option=input("Choose an option: ")
         match chosen_option:
