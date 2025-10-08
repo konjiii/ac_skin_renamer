@@ -2,6 +2,7 @@ import os
 import pickle
 from typing import Any
 
+
 def save(var: Any, path: str) -> None:
     """
     Save variable to a pickle file.
@@ -12,8 +13,9 @@ def save(var: Any, path: str) -> None:
     returns:
         None
     """
-    with open(path, "wb") as file: 
+    with open(path, "wb") as file:
         pickle.dump(var, file)
+
 
 def load(path: str) -> Any:
     """
@@ -23,8 +25,9 @@ def load(path: str) -> Any:
     returns:
         variable loaded from the pickle file
     """
-    with open(path, "rb") as file: 
+    with open(path, "rb") as file:
         return pickle.load(file)
+
 
 def get_cars(ac_path: str) -> list[str]:
     """
@@ -39,6 +42,7 @@ def get_cars(ac_path: str) -> list[str]:
     if not os.path.exists(cars_folder):
         return []
     return os.listdir(cars_folder)
+
 
 def get_skins(ac_path: str, car_name: str) -> list[str]:
     """
@@ -65,6 +69,7 @@ def get_skins(ac_path: str, car_name: str) -> list[str]:
 
     return skins
 
+
 def get_ror_names(ac_path: str, car_name: str) -> list[str]:
     """
     Find ror_names in the skin directory of the selected car.
@@ -84,6 +89,7 @@ def get_ror_names(ac_path: str, car_name: str) -> list[str]:
         return []
 
     return load(ror_file)
+
 
 def save_ror_names(ac_path: str, car_name: str, ror_names: list[str]) -> int:
     """
@@ -105,37 +111,42 @@ def save_ror_names(ac_path: str, car_name: str, ror_names: list[str]) -> int:
 
     return 0
 
+
 def get_settings() -> dict:
     """
     Load settings from a pickle file.
-    
+
     returns:
         dict: settings dictionary
     """
     return load("settings.pkl")
 
+
 def valid_path(path: str) -> bool:
     """
     Check if the provided path is a valid directory.
-    
+
     parameters:
         path: path to check
     returns:
         bool: True if valid, False otherwise
     """
     import os
+
     return path is not None and os.path.exists(path) and os.path.isdir(path)
+
 
 def save_ac_path(settings: dict) -> int:
     """
     Save the Assetto Corsa path to settings.pkl.
-    
+
     parameters:
         settings: settings dictionary
     returns:
         int: -1 if error, 0 if success
     """
     return save(settings, "settings.pkl")
+
 
 def get_renames(ac_path: str, car_name: str) -> dict:
     """
@@ -158,6 +169,7 @@ def get_renames(ac_path: str, car_name: str) -> dict:
         return renames_dict
 
     return load(renames_file)
+
 
 def save_renames(ac_path: str, car_name: str, renames: dict) -> int:
     """

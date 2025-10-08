@@ -1,8 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
 
+
 class SkinDisplayFrame(ttk.LabelFrame):
     """Frame for displaying and managing skin renames."""
+
     def __init__(self, parent, skin_manager, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.skin_manager = skin_manager
@@ -21,7 +23,9 @@ class SkinDisplayFrame(ttk.LabelFrame):
         self.renames_canvas.pack(side="left", fill="both", expand=True)
 
         # scrollbar to scroll through the canvas
-        scrollbar = ttk.Scrollbar(self.renames_frame, orient="vertical", command=self.renames_canvas.yview)
+        scrollbar = ttk.Scrollbar(
+            self.renames_frame, orient="vertical", command=self.renames_canvas.yview
+        )
         scrollbar.pack(side="right", fill="y")
 
         self.renames_canvas.configure(yscrollcommand=scrollbar.set)
@@ -30,18 +34,29 @@ class SkinDisplayFrame(ttk.LabelFrame):
         button_frame = ttk.Frame(self)
         button_frame.pack(side="bottom", fill="x", pady=5)
 
-        apply_button = ttk.Button(button_frame, text="Apply Changes", command=self.skin_manager.apply_changes)
+        apply_button = ttk.Button(
+            button_frame, text="Apply Changes", command=self.skin_manager.apply_changes
+        )
         apply_button.pack(side="left", padx=10)
 
-        reset_button = ttk.Button(button_frame, text="Reset Changes", command=self.skin_manager.reset_changes)
+        reset_button = ttk.Button(
+            button_frame, text="Reset Changes", command=self.skin_manager.reset_changes
+        )
         reset_button.pack(side="left", padx=10)
 
-        paste_button = ttk.Button(button_frame, text="Paste configuration", command=self.skin_manager.paste_configuration)
+        paste_button = ttk.Button(
+            button_frame,
+            text="Paste configuration",
+            command=self.skin_manager.paste_configuration,
+        )
         paste_button.pack(side="right", padx=10)
 
-        copy_button = ttk.Button(button_frame, text="Copy configuration", command=self.skin_manager.copy_configuration)
+        copy_button = ttk.Button(
+            button_frame,
+            text="Copy configuration",
+            command=self.skin_manager.copy_configuration,
+        )
         copy_button.pack(side="right", padx=10)
-
 
     def render_renames(self):
         # Clear previous widgets
@@ -51,17 +66,21 @@ class SkinDisplayFrame(ttk.LabelFrame):
         # Create a new frame inside the canvas
         self.canvas_frame = ttk.Frame(self.renames_canvas)
         # Create a window for the canvas frame
-        canvas_window = self.renames_canvas.create_window((0, 0), window=self.canvas_frame, anchor="nw")
+        canvas_window = self.renames_canvas.create_window(
+            (0, 0), window=self.canvas_frame, anchor="nw"
+        )
 
         if not self.skin_manager.ror_names:
-            no_ror_label = ttk.Label(self.canvas_frame, text="No ROR names found. Please add ROR names.")
+            no_ror_label = ttk.Label(
+                self.canvas_frame, text="No ROR names found. Please add ROR names."
+            )
             no_ror_label.pack(padx=10, pady=10)
             return
 
         # this function handles mouse wheel scrolling
         def on_mousewheel(event):
             # /120 to get 1 unit per notch
-            self.renames_canvas.yview_scroll(int(-event.delta/120), "units")
+            self.renames_canvas.yview_scroll(int(-event.delta / 120), "units")
 
             # Prevent default scrolling behavior of widgets
             return "break"
@@ -88,9 +107,13 @@ class SkinDisplayFrame(ttk.LabelFrame):
             ror_name_label.bind("<MouseWheel>", on_mousewheel)
 
             # Update skin dict when selection changes
-            skin_combobox.bind("<<ComboboxSelected>>", 
-                lambda event, ror=ror_name, combo=skin_combobox: 
-                self.skin_manager.update_skin_mapping(ror, combo.get())
+            skin_combobox.bind(
+                "<<ComboboxSelected>>",
+                lambda event,
+                ror=ror_name,
+                combo=skin_combobox: self.skin_manager.update_skin_mapping(
+                    ror, combo.get()
+                ),
             )
 
             self.skin_manager.rename_comboboxes[ror_name] = skin_combobox
@@ -101,8 +124,8 @@ class SkinDisplayFrame(ttk.LabelFrame):
 
         def configure_canvas_frame(event):
             self.renames_canvas.itemconfig(canvas_window, width=event.width)
-        
-        self.renames_canvas.bind('<Configure>', configure_canvas_frame)
+
+        self.renames_canvas.bind("<Configure>", configure_canvas_frame)
         # Bind mouse wheel scrolling
         self.renames_canvas.bind("<MouseWheel>", on_mousewheel)
         self.canvas_frame.bind("<MouseWheel>", on_mousewheel)

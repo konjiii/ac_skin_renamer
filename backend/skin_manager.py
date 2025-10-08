@@ -1,5 +1,11 @@
 from pathlib import Path
-from backend.file_io_functions import get_cars, get_ror_names, get_skins, get_renames, save_renames
+from backend.file_io_functions import (
+    get_cars,
+    get_ror_names,
+    get_skins,
+    get_renames,
+    save_renames,
+)
 import pyperclip
 
 
@@ -7,6 +13,7 @@ class SkinManager:
     """
     Handles backend logic
     """
+
     def __init__(self, AC_PATH):
         self.AC_PATH = AC_PATH
 
@@ -24,14 +31,16 @@ class SkinManager:
         """Update skins and ror_names based on the selected car and re-render."""
         if not selected_car:
             return
-            
+
         self.skins = get_skins(self.AC_PATH, selected_car)
         self.ror_names = get_ror_names(self.AC_PATH, selected_car)
         self.renames = get_renames(self.AC_PATH, selected_car)
         self.selected_car = selected_car
         self.to_rename.clear()
         self.rename_comboboxes.clear()
-        print(f"Updated car data for {selected_car}:\nSkins: {self.skins}\nROR Names: {self.ror_names}\nRenames: {self.renames}")
+        print(
+            f"Updated car data for {selected_car}:\nSkins: {self.skins}\nROR Names: {self.ror_names}\nRenames: {self.renames}"
+        )
 
     @staticmethod
     def rename_path(old_dir, new_dir):
@@ -44,10 +53,14 @@ class SkinManager:
         if ror_name in self.ror_names and skin_name in self.skins:
             if skin_name in self.to_rename.values():
                 # Remove any existing mapping with this skin_name
-                existing_ror = next((k for k, v in self.to_rename.items() if v == skin_name), None)
+                existing_ror = next(
+                    (k for k, v in self.to_rename.items() if v == skin_name), None
+                )
                 if existing_ror:
                     del self.to_rename[existing_ror]
-                    self.rename_comboboxes[existing_ror].set('')  # Clear the combobox selection
+                    self.rename_comboboxes[existing_ror].set(
+                        ""
+                    )  # Clear the combobox selection
                     print(f"Removed existing mapping: {skin_name} → {existing_ror}")
             self.to_rename[ror_name] = skin_name
             print(f"Updated mapping: {skin_name} → {ror_name}")
@@ -66,7 +79,9 @@ class SkinManager:
             print("No valid car selected.")
             return
 
-        skins_folder = Path(self.AC_PATH) / "content" / "cars" / self.selected_car / "skins"
+        skins_folder = (
+            Path(self.AC_PATH) / "content" / "cars" / self.selected_car / "skins"
+        )
 
         failed = False
         for ror_name, skin_name in self.to_rename.items():
@@ -97,8 +112,11 @@ class SkinManager:
         failed = False
         to_remove = list()
         for ror_name, skin_name in self.renames.items():
+            # fmt: off
             old_dir = Path(self.AC_PATH) / "content" / "cars" / self.selected_car / "skins" / ror_name
             new_dir = Path(self.AC_PATH) / "content" / "cars" / self.selected_car / "skins" / skin_name
+            # fmt: on
+
             if not old_dir.exists():
                 failed = True
                 print(f"Cannot rename {old_dir} → {new_dir}: source does not exist.")
@@ -106,10 +124,7 @@ class SkinManager:
                 failed = True
                 print(f"Cannot rename {old_dir} → {new_dir}: target already exists.")
             else:
-                self.rename_path(
-                    old_dir=old_dir,
-                    new_dir=new_dir
-                )
+                self.rename_path(old_dir=old_dir, new_dir=new_dir)
                 to_remove.append(ror_name)
 
         for ror_name in to_remove:
@@ -118,9 +133,8 @@ class SkinManager:
         save_renames(self.AC_PATH, self.selected_car, self.renames)
 
         for ror_name, combobox in self.rename_comboboxes.items():
-            combobox.set('')  # Clear the combobox selection
+            combobox.set("")  # Clear the combobox selection
 
-        
         if failed:
             print("Some changes could not be reset due to errors.")
             return
@@ -131,7 +145,7 @@ class SkinManager:
         if self.renames == {}:
             print("No renames to copy.")
             return
-        
+
         print("copying configuration")
         pyperclip.copy(str(self.renames))
 
