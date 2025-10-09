@@ -52,12 +52,15 @@ class SkinDisplayFrame(ttk.LabelFrame):
         )
         paste_button.pack(side="right", padx=10)
 
-        copy_button = ttk.Button(
+        self.copy_button = ttk.Button(
             button_frame,
             text="Copy configuration",
-            command=self.skin_manager.copy_configuration,
+            command=self.copy_handler,
+            width=20,
         )
-        copy_button.pack(side="right", padx=10)
+        self.copy_button.pack(side="right", padx=10)
+
+        self.copy_button_timer = None
 
     def render_renames(self):
         # Clear previous widgets
@@ -131,7 +134,26 @@ class SkinDisplayFrame(ttk.LabelFrame):
         self.renames_canvas.bind("<MouseWheel>", on_mousewheel)
         self.canvas_frame.bind("<MouseWheel>", on_mousewheel)
 
+    def copy_handler(self):
+        """
+        Handle copy button click, update button text based on success or failure.
+        """
+        result = self.skin_manager.copy_configuration()
+        if result == -1:
+            if self.copy_button_timer:
+                self.after_cancel(self.copy_button_timer)
+            self.copy_button.config(text="No renames to copy...")
+            self.copy_button_timer = self.after(1000, lambda: self.copy_button.config(text="Copy configuration"))
+        else:
+            if self.copy_button_timer:
+                self.after_cancel(self.copy_button_timer)
+            self.copy_button.config(text="Success!")
+            self.copy_button_timer = self.after(1000, lambda: self.copy_button.config(text="Copy configuration"))
+
     def paste_dialog(self):
+        """
+        Handle paste dialog, get configuration text from user send to skin manager.
+        """
         config_text = sd.askstring("Input", "Paste configuration here:")
         if not config_text:
             return

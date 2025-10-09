@@ -145,13 +145,20 @@ class SkinManager:
             return
         print("All changes have been reset.")
 
-    def copy_configuration(self) -> None:
-        """Copy current renames to clipboard."""
+    def copy_configuration(self) -> int:
+        """
+        Copy current renames to clipboard.
+        
+        Returns:
+            0 on success, -1 if there are no renames to copy.
+        """
         if self.renames == {}:
             print("No renames to copy.")
-            return
+            return -1
 
         pyperclip.copy(json.dumps(self.renames))
+        print("Copied current configuration to clipboard.")
+        return 0
 
     def paste_configuration(self, config_text: str) -> None:
         """Paste renames from clipboard."""
