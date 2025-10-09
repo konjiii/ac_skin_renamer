@@ -2,7 +2,7 @@ from tkinter import ttk
 
 
 class PlaceholderEntry(ttk.Entry):
-    """And Entry widget that shows a placeholder when empty."""
+    """Entry widget that shows a placeholder when empty."""
 
     def __init__(
         self, master=None, placeholder="PLACEHOLDER", color="grey", *args, **kwargs

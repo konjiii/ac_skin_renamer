@@ -7,7 +7,7 @@ from backend.file_io_functions import (
     save_renames,
 )
 import pyperclip
-from ast import literal_eval
+import json
 
 
 class SkinManager:
@@ -151,14 +151,13 @@ class SkinManager:
             print("No renames to copy.")
             return
 
-        print("copying configuration")
-        pyperclip.copy(str(self.renames))
+        pyperclip.copy(json.dumps(self.renames))
 
     def paste_configuration(self, config_text: str) -> None:
         """Paste renames from clipboard."""
         # try to parse clipboard content
         try:
-            config_parsed = literal_eval(config_text)
+            config_parsed = json.loads(config_text)
         except ValueError:
             print("HE IS TRYING TO HACK YOU! DONT LISTEN TO HI>$!**(*)")
             return
