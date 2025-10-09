@@ -112,7 +112,7 @@ def save_ror_names(ac_path: str, car_name: str, ror_names: list[str]) -> int:
     return 0
 
 
-def get_settings() -> dict:
+def get_settings() -> dict[str, str]:
     """
     Load settings from a pickle file.
 
@@ -122,7 +122,7 @@ def get_settings() -> dict:
     return load("settings.pkl")
 
 
-def valid_path(path: str) -> bool:
+def valid_path(path: str | None) -> bool:
     """
     Check if the provided path is a valid directory.
 
@@ -131,21 +131,17 @@ def valid_path(path: str) -> bool:
     returns:
         bool: True if valid, False otherwise
     """
-    import os
-
     return path is not None and os.path.exists(path) and os.path.isdir(path)
 
 
-def save_ac_path(settings: dict) -> int:
+def save_ac_path(settings: dict) -> None:
     """
     Save the Assetto Corsa path to settings.pkl.
 
     parameters:
         settings: settings dictionary
-    returns:
-        int: -1 if error, 0 if success
     """
-    return save(settings, "settings.pkl")
+    save(settings, "settings.pkl")
 
 
 def get_renames(ac_path: str, car_name: str) -> dict:

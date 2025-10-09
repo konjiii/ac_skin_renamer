@@ -7,6 +7,7 @@ from backend.file_io_functions import (
     save_renames,
 )
 import pyperclip
+from ast import literal_eval
 
 
 class SkinManager:
@@ -27,7 +28,7 @@ class SkinManager:
         self.renames = get_renames(self.AC_PATH, self.cars[0]) if self.cars else {}
         self.to_rename = {}
 
-    def update_car_data(self, selected_car) -> None:
+    def update_car_data(self, selected_car: str) -> None:
         """Update skins and ror_names based on the selected car and re-render."""
         if not selected_car:
             return
@@ -107,6 +108,10 @@ class SkinManager:
 
     def reset_changes(self) -> None:
         """Reset all renaming changes."""
+        if not self.selected_car:
+            print("No valid car selected.")
+            return
+
         self.to_rename.clear()
 
         failed = False
@@ -149,6 +154,26 @@ class SkinManager:
         print("copying configuration")
         pyperclip.copy(str(self.renames))
 
-    def paste_configuration(self) -> None:
+    def paste_configuration(self, config_text: str) -> None:
         """Paste renames from clipboard."""
+        # try to parse clipboard content
+        try:
+            config_parsed = literal_eval(config_text)
+        except ValueError:
+            print("HE IS TRYING TO HACK YOU! DONT LISTEN TO HI>$!**(*)")
+            return
+        if type(config_parsed) is not dict:
+            raise TypeError("Not a dict after eval")
+
+        # check if provided config is valid for current car
+        for ror, skin in config_parsed.items():
+            if ror not in self.ror_names or skin not in self.skins:
+                print(f"Invalid ROR name or skin name in pasted config: {skin}, {ror}")
+                return
+
+        # first reset to original state
+        self.reset_changes()
         print("pasting configuration")
+        # then apply new config
+        self.to_rename = config_parsed
+        self.apply_changes()

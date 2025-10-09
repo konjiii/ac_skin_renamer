@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import simpledialog as sd
 
 
 class SkinDisplayFrame(ttk.LabelFrame):
@@ -47,7 +48,7 @@ class SkinDisplayFrame(ttk.LabelFrame):
         paste_button = ttk.Button(
             button_frame,
             text="Paste configuration",
-            command=self.skin_manager.paste_configuration,
+            command=self.paste_dialog,
         )
         paste_button.pack(side="right", padx=10)
 
@@ -129,3 +130,11 @@ class SkinDisplayFrame(ttk.LabelFrame):
         # Bind mouse wheel scrolling
         self.renames_canvas.bind("<MouseWheel>", on_mousewheel)
         self.canvas_frame.bind("<MouseWheel>", on_mousewheel)
+
+    def paste_dialog(self):
+        config_text = sd.askstring("Input", "Paste configuration here:")
+        if not config_text:
+            return
+
+        self.skin_manager.paste_configuration(config_text)
+        self.render_renames()
