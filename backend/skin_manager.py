@@ -91,12 +91,27 @@ class SkinManager:
             if not old_dir.exists():
                 failed = True
                 print(f"Cannot rename {old_dir} → {new_dir}: source does not exist.")
-            elif new_dir.exists():
-                failed = True
-                print(f"Cannot rename {old_dir} → {new_dir}: target already exists.")
             else:
-                self.rename_path(old_dir, new_dir)
-                self.renames[ror_name] = skin_name
+                if (new_dir).exists():
+                    # search where the new_skin map exists
+                    holding_driver = self.renames.get(ror_name)
+                    # rename that instance first
+                    temp_dir = skins_folder / "967fiyuvkhj"
+                    self.rename_path(old_dir=new_dir, new_dir=temp_dir)
+                    # then change old to new
+                    self.rename_path(old_dir=old_dir, new_dir=new_dir)
+                    # if original is available then go back to original
+                    if not (skins_folder/holding_driver).exists():
+                        self.rename_path(old_dir=temp_dir, new_dir=skins_folder/holding_driver)
+                        del self.renames[ror_name]
+                    # otherwise just make new -> old, (DONE: old is new, NOW: new is old)
+                    else:
+                        self.rename_path(old_dir=temp_dir, new_dir=old_dir)
+                        self.renames[skin_name] = holding_driver
+                else:
+                    self.rename_path(old_dir, new_dir)
+                    self.renames[ror_name] = skin_name
+
 
         save_renames(self.AC_PATH, self.selected_car, self.renames)
 
