@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, filedialog as fd
+from widgets import PlaceholderEntry
 import os
 import sys
 from backend.file_io_functions import valid_path, save_ac_path
@@ -15,8 +16,13 @@ class PathInputFrame(ttk.Frame):
         self.create_widgets()
 
     def create_widgets(self) -> None:
-        self.ac_path_var = tk.StringVar(value="Input Assetto Corsa directory")
-        ac_path_input = ttk.Entry(self, textvariable=self.ac_path_var, width=50)
+        self.ac_path_var = tk.StringVar(value="")
+        ac_path_input = PlaceholderEntry(
+            self,
+            placeholder="Input Assetto Corsa directory",
+            textvariable=self.ac_path_var,
+            width=50,
+        )
         ac_path_input.pack(pady=10)
 
         button_frame = ttk.Frame(self)
