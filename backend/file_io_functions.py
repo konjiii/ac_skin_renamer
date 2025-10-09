@@ -2,6 +2,8 @@ import os
 import pickle
 from typing import Any
 
+# we should use json instead of pickle for better security and readability
+
 
 def save(var: Any, path: str) -> None:
     """

@@ -14,6 +14,9 @@ class PlaceholderEntry(ttk.Entry):
 
         super().__init__(master, *args, **kwargs)
 
+        # bind escape to unfocus the entry
+        self.bind("<Escape>", lambda e: self.master.focus())
+
         self.placeholder = placeholder
         self.placeholder_color = color
         self.default_fg_color = self["foreground"]
