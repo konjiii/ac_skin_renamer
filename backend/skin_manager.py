@@ -86,7 +86,13 @@ class SkinManager:
 
         failed = False
         for ror_name, skin_name in self.to_rename.items():
-            old_dir = skins_folder / skin_name
+            # search skin_name in renames dict to see if it is already renamed and use that as source!!
+            curr_skin_name = next((key for key, value in self.renames.items() if value == skin_name), skin_name)
+            # remove that entry from renames dict to avoid conflicts
+            if curr_skin_name != skin_name:
+                del self.renames[curr_skin_name]
+
+            old_dir = skins_folder / curr_skin_name
             new_dir = skins_folder / ror_name
             if not old_dir.exists():
                 failed = True
