@@ -1,6 +1,6 @@
+import json
 import tkinter as tk
 import os
-import pickle
 from backend.file_io_functions import valid_path, get_settings
 from backend import SkinManager
 from ui import PathInputFrame, ControlFrame, SkinDisplayFrame
@@ -45,9 +45,9 @@ class SkinRenamerApp(tk.Frame):
 
 
 if __name__ == "__main__":
-    if not os.path.exists("settings.pkl"):
-        with open("settings.pkl", "wb") as f:
-            pickle.dump({"AC_PATH": None}, f)
+    if not os.path.exists("settings.json"):
+        with open("settings.json", "w") as f:
+            json.dump({"AC_PATH": None}, f)
 
     root = tk.Tk()
     app = SkinRenamerApp(root)

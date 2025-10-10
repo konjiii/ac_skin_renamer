@@ -110,7 +110,7 @@ class SkinManager:
                     # rename that instance first
                     # create a temp dir using tempfile
                     temp_dir_name = TemporaryDirectory(prefix=holding_driver, dir=skins_folder)
-                    temp_dir = Path(temp_dir_name.name) / holding_driver
+                    temp_dir = Path(temp_dir_name.name) / "temp_dir"
                     self.rename_path(old_dir=new_dir, new_dir=temp_dir)
                     # then change old to new
                     self.rename_path(old_dir=old_dir, new_dir=new_dir)
