@@ -1,5 +1,5 @@
 import os
-import pickle
+import json
 from typing import Any
 
 # we should use json instead of pickle for better security and readability
@@ -15,20 +15,20 @@ def save(var: Any, path: str) -> None:
     returns:
         None
     """
-    with open(path, "wb") as file:
-        pickle.dump(var, file)
+    with open(path, "w") as file:
+        json.dump(var, file)
 
 
 def load(path: str) -> Any:
     """
-    Load variable from a pickle file.
+    Load variable from a json file.
     parameters:
-        path: path to the pickle file
+        path: path to the json file
     returns:
-        variable loaded from the pickle file
+        variable loaded from the json file
     """
-    with open(path, "rb") as file:
-        return pickle.load(file)
+    with open(path, "r") as file:
+        return json.load(file)
 
 
 def get_cars(ac_path: str) -> list[str]:
@@ -48,7 +48,7 @@ def get_cars(ac_path: str) -> list[str]:
 
 def get_skins(ac_path: str, car_name: str) -> list[str]:
     """
-    Find skin_list.pkl in skin directory of selected car. If not found, create it with current skins in directory.
+    Find skin_list.json in skin directory of selected car. If not found, create it with current skins in directory.
 
     parameters:
         ac_path: path to AC installation
@@ -57,7 +57,7 @@ def get_skins(ac_path: str, car_name: str) -> list[str]:
         list of skins (folder names)
     """
     skins_folder = os.path.join(ac_path, "content", "cars", car_name, "skins")
-    skins_file = os.path.join(skins_folder, "skin_list.pkl")
+    skins_file = os.path.join(skins_folder, "skin_list.json")
 
     if not os.path.exists(skins_folder):
         return []
@@ -83,7 +83,7 @@ def get_ror_names(ac_path: str, car_name: str) -> list[str]:
         list of ror_names (folder names)
     """
     skins_folder = os.path.join(ac_path, "content", "cars", car_name, "skins")
-    ror_file = os.path.join(skins_folder, "ror_list.pkl")
+    ror_file = os.path.join(skins_folder, "ror_list.json")
     if not os.path.exists(skins_folder):
         return []
 
@@ -105,7 +105,7 @@ def save_ror_names(ac_path: str, car_name: str, ror_names: list[str]) -> int:
         int: -1 if error, 0 if success
     """
     skins_folder = os.path.join(ac_path, "content", "cars", car_name, "skins")
-    ror_file = os.path.join(skins_folder, "ror_list.pkl")
+    ror_file = os.path.join(skins_folder, "ror_list.json")
     if not os.path.exists(skins_folder):
         return -1
 
@@ -121,7 +121,7 @@ def get_settings() -> dict[str, str]:
     returns:
         dict: settings dictionary
     """
-    return load("settings.pkl")
+    return load("settings.json")
 
 
 def valid_path(path: str | None) -> bool:
@@ -138,12 +138,12 @@ def valid_path(path: str | None) -> bool:
 
 def save_ac_path(settings: dict) -> None:
     """
-    Save the Assetto Corsa path to settings.pkl.
+    Save the Assetto Corsa path to settings.json.
 
     parameters:
         settings: settings dictionary
     """
-    save(settings, "settings.pkl")
+    save(settings, "settings.json")
 
 
 def get_renames(ac_path: str, car_name: str) -> dict:
@@ -157,7 +157,7 @@ def get_renames(ac_path: str, car_name: str) -> dict:
         str: rename dictionary file name
     """
     skins_folder = os.path.join(ac_path, "content", "cars", car_name, "skins")
-    renames_file = os.path.join(skins_folder, "rename_dict.pkl")
+    renames_file = os.path.join(skins_folder, "rename_dict.json")
     if not os.path.exists(skins_folder):
         return {}
 
@@ -181,7 +181,7 @@ def save_renames(ac_path: str, car_name: str, renames: dict) -> int:
         int: -1 if error, 0 if success
     """
     skins_folder = os.path.join(ac_path, "content", "cars", car_name, "skins")
-    renames_file = os.path.join(skins_folder, "rename_dict.pkl")
+    renames_file = os.path.join(skins_folder, "rename_dict.json")
     if not os.path.exists(skins_folder):
         return -1
 
