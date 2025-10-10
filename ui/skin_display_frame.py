@@ -1,12 +1,12 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import simpledialog as sd
-
+from backend import SkinManager
 
 class SkinDisplayFrame(ttk.LabelFrame):
     """Frame for displaying and managing skin renames."""
 
-    def __init__(self, parent, skin_manager, *args, **kwargs):
+    def __init__(self, parent, skin_manager: SkinManager, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.skin_manager = skin_manager
         self.canvas_frame = None

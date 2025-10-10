@@ -52,13 +52,19 @@ class SkinManager:
 
     def update_skin_mapping(self, ror_name: str, skin_name: str) -> None:
         """Update the mapping of a skin name to a ROR name."""
+        # remove any combobox that had this skin_name already mapped
+        for combobox in self.rename_comboboxes.values():
+            if combobox.get() == skin_name and combobox != self.rename_comboboxes.get(ror_name):
+                combobox.set("")  # Clear the combobox selection
+                print(f"Cleared combobox with duplicate skin name: {skin_name}")
+
         if ror_name in self.ror_names and skin_name in self.skins:
             if skin_name in self.to_rename.values():
                 # Remove any existing mapping with this skin_name
                 existing_ror = next(
                     (k for k, v in self.to_rename.items() if v == skin_name), None
                 )
-                if existing_ror:
+                if existing_ror and existing_ror != ror_name:
                     del self.to_rename[existing_ror]
                     self.rename_comboboxes[existing_ror].set(
                         ""
