@@ -8,6 +8,7 @@ from backend.file_io_functions import (
 )
 import pyperclip
 import json
+from tempfile import NamedTemporaryFile
 
 
 class SkinManager:
@@ -86,12 +87,11 @@ class SkinManager:
 
         failed = False
         for ror_name, skin_name in self.to_rename.items():
-            # search skin_name in renames dict to see if it is already renamed and use that as source!!
+            # search skin_name in renames dict to see if it is already renamed and use that as source
             curr_skin_name = next((key for key, value in self.renames.items() if value == skin_name), skin_name)
-            # remove that entry from renames dict to avoid conflicts
             if curr_skin_name != skin_name:
                 del self.renames[curr_skin_name]
-
+                
             old_dir = skins_folder / curr_skin_name
             new_dir = skins_folder / ror_name
             if not old_dir.exists():
@@ -106,14 +106,17 @@ class SkinManager:
                     self.rename_path(old_dir=new_dir, new_dir=temp_dir)
                     # then change old to new
                     self.rename_path(old_dir=old_dir, new_dir=new_dir)
+                    print("HIER")
+                    print(ror_name)
+                    print(skin_name)
+                    self.renames[ror_name] = skin_name
                     # if original is available then go back to original
                     if not (skins_folder/holding_driver).exists():
                         self.rename_path(old_dir=temp_dir, new_dir=skins_folder/holding_driver)
-                        del self.renames[ror_name]
                     # otherwise just make new -> old, (DONE: old is new, NOW: new is old)
                     else:
                         self.rename_path(old_dir=temp_dir, new_dir=old_dir)
-                        self.renames[skin_name] = holding_driver
+                        self.renames[curr_skin_name] = holding_driver
                 else:
                     self.rename_path(old_dir, new_dir)
                     self.renames[ror_name] = skin_name
