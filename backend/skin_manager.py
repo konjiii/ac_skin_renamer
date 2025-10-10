@@ -8,7 +8,7 @@ from backend.file_io_functions import (
 )
 import pyperclip
 import json
-from tempfile import NamedTemporaryFile
+from tempfile import TemporaryDirectory
 
 
 class SkinManager:
@@ -102,7 +102,9 @@ class SkinManager:
                     # search where the new_skin map exists
                     holding_driver = self.renames.get(ror_name)
                     # rename that instance first
-                    temp_dir = skins_folder / "967fiyuvkhj"
+                    # create a temp dir using tempfile
+                    temp_dir_name = TemporaryDirectory(prefix=holding_driver, dir=skins_folder)
+                    temp_dir = Path(temp_dir_name.name) / holding_driver
                     self.rename_path(old_dir=new_dir, new_dir=temp_dir)
                     # then change old to new
                     self.rename_path(old_dir=old_dir, new_dir=new_dir)
