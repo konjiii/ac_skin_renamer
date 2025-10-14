@@ -16,8 +16,9 @@ class SkinManager:
     Handles backend logic
     """
 
-    def __init__(self, AC_PATH):
+    def __init__(self, AC_PATH: Path, SAVE_PATH: Path):
         self.AC_PATH = AC_PATH
+        self.SAVE_PATH = SAVE_PATH
 
         self.cars = get_cars(self.AC_PATH)
 
@@ -26,7 +27,7 @@ class SkinManager:
         self.ror_names = []
 
         self.rename_comboboxes = {}
-        self.renames = get_renames(self.AC_PATH, self.cars[0]) if self.cars else {}
+        self.renames = get_renames(self.SAVE_PATH, self.cars[0]) if self.cars else {}
         self.to_rename = {}
 
     def update_car_data(self, selected_car: str) -> None:
@@ -34,9 +35,9 @@ class SkinManager:
         if not selected_car:
             return
 
-        self.skins = get_skins(self.AC_PATH, selected_car)
-        self.ror_names = get_ror_names(self.AC_PATH, selected_car)
-        self.renames = get_renames(self.AC_PATH, selected_car)
+        self.skins = get_skins(self.AC_PATH, self.SAVE_PATH, selected_car)
+        self.ror_names = get_ror_names(self.SAVE_PATH, selected_car)
+        self.renames = get_renames(self.SAVE_PATH, selected_car)
         self.selected_car = selected_car
         self.to_rename.clear()
         self.rename_comboboxes.clear()
@@ -130,7 +131,7 @@ class SkinManager:
                     self.renames[ror_name] = skin_name
 
 
-        save_renames(self.AC_PATH, self.selected_car, self.renames)
+        save_renames(self.SAVE_PATH, self.selected_car, self.renames)
 
         self.to_rename.clear()
         if failed:
@@ -167,7 +168,7 @@ class SkinManager:
         for ror_name in to_remove:
             del self.renames[ror_name]
 
-        save_renames(self.AC_PATH, self.selected_car, self.renames)
+        save_renames(self.SAVE_PATH, self.selected_car, self.renames)
 
         for ror_name, combobox in self.rename_comboboxes.items():
             combobox.set("")  # Clear the combobox selection
