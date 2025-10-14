@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 import tkinter as tk
 import os
 from backend.file_io_functions import valid_path, get_settings
@@ -16,18 +17,34 @@ class SkinRenamerApp(tk.Frame):
         self.parent.geometry("800x600")
         self.parent.minsize(600, 400)
 
-        self.settings = get_settings()
-        self.AC_PATH = self.settings.get("AC_PATH")
+        self.initialize_root()
 
-        if not valid_path(self.AC_PATH):
+        self.settings = get_settings()
+        AC_PATH = self.settings.get("AC_PATH")
+        SAVE_PATH = self.settings.get("SAVE_PATH")
+
+        if not valid_path(AC_PATH):
             self.path_input_frame = PathInputFrame(self.parent, self)
             self.path_input_frame.pack(expand=True)
         else:
+            self.AC_PATH = Path(AC_PATH)
+            self.SAVE_PATH = Path(SAVE_PATH)
             self.initialize_main_app()
+
+    def initialize_root(self) -> None:
+        # ensure saves directory exists
+        SAVE_PATH = str(Path(__file__).parent / "saves")
+        if not os.path.exists(SAVE_PATH):
+            os.makedirs(SAVE_PATH)
+
+        # ensure settings.json exists
+        if not os.path.exists("settings.json"):
+            with open("settings.json", "w") as f:
+                json.dump({"AC_PATH": None, "SAVE_PATH": SAVE_PATH}, f)
 
     def initialize_main_app(self) -> None:
         # backend manager
-        self.skin_manager = SkinManager(self.AC_PATH)
+        self.skin_manager = SkinManager(self.AC_PATH, self.SAVE_PATH)
 
         # UI components
         self.control_frame = ControlFrame(self.parent, self.skin_manager)
@@ -45,10 +62,6 @@ class SkinRenamerApp(tk.Frame):
 
 
 if __name__ == "__main__":
-    if not os.path.exists("settings.json"):
-        with open("settings.json", "w") as f:
-            json.dump({"AC_PATH": None}, f)
-
     root = tk.Tk()
     app = SkinRenamerApp(root)
     root.mainloop()

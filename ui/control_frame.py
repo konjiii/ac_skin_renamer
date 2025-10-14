@@ -10,6 +10,7 @@ class ControlFrame(ttk.Frame):
         super().__init__(parent, *args, **kwargs)
         self.skin_manager = skin_manager
         self.AC_PATH = skin_manager.AC_PATH
+        self.SAVE_PATH = skin_manager.SAVE_PATH
         self.create_widgets()
 
     def set_skin_display_frame(self, skin_display_frame) -> None:
@@ -57,7 +58,7 @@ class ControlFrame(ttk.Frame):
 
         if (
             save_ror_names(
-                self.AC_PATH, self.car_combobox.get(), self.skin_manager.ror_names
+                self.SAVE_PATH, self.car_combobox.get(), self.skin_manager.ror_names
             )
             == -1
         ):
@@ -70,7 +71,7 @@ class ControlFrame(ttk.Frame):
         self.skin_manager.ror_names = []
         if (
             save_ror_names(
-                self.AC_PATH, self.car_combobox.get(), self.skin_manager.ror_names
+                self.SAVE_PATH, self.car_combobox.get(), self.skin_manager.ror_names
             )
             == -1
         ):
