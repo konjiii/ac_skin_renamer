@@ -2,8 +2,7 @@ import os
 import json
 from typing import Any
 from pathlib import Path
-
-# we should use json instead of pickle for better security and readability
+import globals
 
 
 def save(var: Any, path: Path) -> None:
@@ -108,7 +107,7 @@ def get_settings() -> dict[str, str]:
 
     :return: dict: settings dictionary
     """
-    return load(Path(__file__).parent.parent / "settings.json")
+    return load(globals.ROOT_DIR / "settings.json")
 
 
 def valid_path(path: str | None) -> bool:
@@ -127,7 +126,7 @@ def save_ac_path(settings: dict) -> None:
 
     :param settings: settings dictionary
     """
-    save(settings, Path(__file__).parent.parent / "settings.json")
+    save(settings, globals.ROOT_DIR / "settings.json")
 
 
 def get_renames(save_path: Path, car_name: str) -> dict:

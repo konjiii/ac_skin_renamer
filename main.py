@@ -1,11 +1,11 @@
+import os
 import json
 from pathlib import Path
 import tkinter as tk
-import os
 from backend.file_io_functions import valid_path, get_settings
 from backend import SkinManager
 from ui import PathInputFrame, ControlFrame, SkinDisplayFrame
-
+import globals
 
 class SkinRenamerApp(tk.Frame):
     """Main application class."""
@@ -33,13 +33,13 @@ class SkinRenamerApp(tk.Frame):
 
     def initialize_root(self) -> None:
         # ensure saves directory exists
-        SAVE_PATH = str(Path(__file__).parent / "saves")
+        SAVE_PATH = str(globals.ROOT_DIR / "saves")
         if not os.path.exists(SAVE_PATH):
             os.makedirs(SAVE_PATH)
 
         # ensure settings.json exists
-        if not os.path.exists("settings.json"):
-            with open("settings.json", "w") as f:
+        if not os.path.exists(globals.ROOT_DIR / "settings.json"):
+            with open(globals.ROOT_DIR / "settings.json", "w") as f:
                 json.dump({"AC_PATH": None, "SAVE_PATH": SAVE_PATH}, f)
 
     def initialize_main_app(self) -> None:

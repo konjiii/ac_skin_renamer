@@ -8,3 +8,8 @@ wheels/
 
 # Virtual environments
 .venv
+
+# application files
+*.exe
+saves/
+settings.json
