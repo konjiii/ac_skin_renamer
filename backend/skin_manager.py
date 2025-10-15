@@ -78,15 +78,15 @@ class SkinManager:
 
         print(self.to_rename)
 
-    def apply_changes(self) -> None:
+    def apply_changes(self) -> int:
         """Apply the renaming changes."""
         if not self.to_rename:
             print("No changes to apply.")
-            return
+            return -1
 
         if not self.selected_car:
             print("No valid car selected.")
-            return
+            return -1
 
         skins_folder = (
             Path(self.AC_PATH) / "content" / "cars" / self.selected_car / "skins"
@@ -136,8 +136,9 @@ class SkinManager:
         self.to_rename.clear()
         if failed:
             print("Some changes could not be applied due to errors.")
-            return
+            return -1
         print("All changes applied.")
+        return 0
 
     def reset_changes(self) -> None:
         """Reset all renaming changes."""

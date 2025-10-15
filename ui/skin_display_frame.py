@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter import simpledialog as sd
 from backend import SkinManager
 
+
 class SkinDisplayFrame(ttk.LabelFrame):
     """Frame for displaying and managing skin renames."""
 
@@ -35,10 +36,10 @@ class SkinDisplayFrame(ttk.LabelFrame):
         button_frame = ttk.Frame(self)
         button_frame.pack(side="bottom", fill="x", pady=5)
 
-        apply_button = ttk.Button(
-            button_frame, text="Apply Changes", command=self.skin_manager.apply_changes
+        self.apply_button = ttk.Button(
+            button_frame, text="Apply Changes", command=self.apply_handler, width=20
         )
-        apply_button.pack(side="left", padx=10)
+        self.apply_button.pack(side="left", padx=10)
 
         reset_button = ttk.Button(
             button_frame, text="Reset Changes", command=self.skin_manager.reset_changes
@@ -61,6 +62,7 @@ class SkinDisplayFrame(ttk.LabelFrame):
         self.copy_button.pack(side="right", padx=10)
 
         self.copy_button_timer = None
+        self.apply_button_timer = None
 
     def render_renames(self):
         # Clear previous widgets
@@ -134,6 +136,7 @@ class SkinDisplayFrame(ttk.LabelFrame):
         self.renames_canvas.bind("<MouseWheel>", on_mousewheel)
         self.canvas_frame.bind("<MouseWheel>", on_mousewheel)
 
+    # this and next function should probably be merged into one function with parameters
     def copy_handler(self):
         """
         Handle copy button click, update button text based on success or failure.
@@ -143,12 +146,38 @@ class SkinDisplayFrame(ttk.LabelFrame):
             if self.copy_button_timer:
                 self.after_cancel(self.copy_button_timer)
             self.copy_button.config(text="No renames to copy...")
-            self.copy_button_timer = self.after(1000, lambda: self.copy_button.config(text="Copy configuration"))
+            self.copy_button_timer = self.after(
+                1000, lambda: self.copy_button.config(text="Copy configuration")
+            )
         else:
             if self.copy_button_timer:
                 self.after_cancel(self.copy_button_timer)
             self.copy_button.config(text="Success!")
-            self.copy_button_timer = self.after(1000, lambda: self.copy_button.config(text="Copy configuration"))
+            self.copy_button_timer = self.after(
+                1000, lambda: self.copy_button.config(text="Copy configuration")
+            )
+
+    def apply_handler(self):
+        """
+        Handle apply button click, update renames and re-render.
+        """
+        result = self.skin_manager.apply_changes()
+        if result == -1:
+            if self.apply_button_timer:
+                self.after_cancel(self.apply_button_timer)
+            self.apply_button.config(text="Failed to apply...")
+            self.apply_button_timer = self.after(
+                1000, lambda: self.apply_button.config(text="Apply changes")
+            )
+        else:
+            self.skin_manager.update_car_data(self.skin_manager.selected_car)
+            self.render_renames()
+            if self.apply_button_timer:
+                self.after_cancel(self.apply_button_timer)
+            self.apply_button.config(text="Success!")
+            self.apply_button_timer = self.after(
+                1000, lambda: self.apply_button.config(text="Apply changes")
+            )
 
     def paste_dialog(self):
         """
